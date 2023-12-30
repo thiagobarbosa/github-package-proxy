@@ -1,0 +1,16 @@
+
+# dotenv environment variables file
+.env
+.env.build
+# Dependency directories
+node_modules
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+# IDE Configs
+.idea
+.vscode
+# Mac files
+.DS_Store
+**/.DS_Store

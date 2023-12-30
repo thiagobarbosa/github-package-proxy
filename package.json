@@ -1,0 +1,14 @@
+{
+  "name": "pkg-proxy-app",
+  "version": "1.0.0",
+  "description": "A simple proxy application for Github Maven packages",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "dotenv": "^16.3.1",
+    "express": "^4.17.1"
+  }
+}
