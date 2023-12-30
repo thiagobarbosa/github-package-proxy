@@ -83,4 +83,4 @@ Cloud Run will generate a public URL of your proxy app. You can create a custom 
 
 ## License
 
-This code is free to use under the terms of the MIT licence. See LICENSE.
+This code is free to use under the terms of the MIT licence. See [LICENSE](https://github.com/thiagobarbosa/github-package-proxy/blob/main/LICENSE).
