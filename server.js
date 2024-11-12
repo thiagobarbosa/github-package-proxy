@@ -3,8 +3,9 @@ const express = require('express');
 const axios = require('axios');
 const app = express();
 
-const GITHUB_OWNER = 'YOUR_GITHUB_OWNER';
-const GROUP_ID = 'YOUR_GROUP_ID';
+const GITHUB_ORG = process.env.GITHUB_ORG;
+const GITHUB_REPO = process.env.GITHUB_REPO;
+const GROUP_ID = process.env.GROUP_ID;
 
 app.get('*', async (req, res) => {
     try {
@@ -12,17 +13,13 @@ app.get('*', async (req, res) => {
         const pattern = new RegExp(`^\/${GROUP_ID}\/(.+)$`);
 
         const match = req.path.match(pattern);
-
         if (!match) {
             return res.status(404).send('Invalid path: ' + req.path);
         }
 
-        // the '/pkg' is hardcoded and it seems to work with any value, even though
-        // Github documentation says it should be the repository name;
-        // this might change in the future
-        const targetURL = `https://maven.pkg.github.com/${GITHUB_OWNER}/pkg${req.path}`;
-
+        const targetURL = `https://maven.pkg.github.com/${GITHUB_ORG}/${GITHUB_REPO}/${req.path}`;
         const response = await axios.get(targetURL, {
+            responseType: 'stream',
             headers: { 
                 'Authorization': `token ${process.env.GITHUB_TOKEN}`,
                 'Host': 'maven.pkg.github.com'
@@ -30,9 +27,8 @@ app.get('*', async (req, res) => {
             validateStatus: function (status) {
                 return status >= 200 && status < 303;
             },
-            maxRedirects: 0
+            maxRedirects: 5
         });
-
         // Check if the response is a redirect
         if (response.status === 302) {
             // Redirect user to the URL provided in the Location header
@@ -41,7 +37,7 @@ app.get('*', async (req, res) => {
         } else {
             // Handle non-redirect responses
             res.set(response.headers);
-            res.status(response.status).send(response.data);
+            response.data.pipe(res);
         }
     } catch (error) {
         console.error(error);
@@ -49,7 +45,7 @@ app.get('*', async (req, res) => {
     }
 });
 
-const port = process.env.PORT || 80;
+const port = process.env.PORT || 3001;
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
